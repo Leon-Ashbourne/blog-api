@@ -1,12 +1,12 @@
 const express = require('express');
+const { postRouter, userRouter, commentsRouter } = require('./routes/index');
 
 const app = express();
 
-app.use("/", (req, res) => {
-    res.json({
-        message: "Hii, it's working perfectly!!"
-    });
-})
+//routes
+app.use('/posts', postRouter);
+app.use('/users', userRouter);
+app.use('/comments', commentsRouter);
 
 const PORT = 5000;
 
