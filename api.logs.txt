@@ -1,0 +1,7 @@
+# feb 5 19:15
+1. need to modify responses so that they can send data based upon options user selects.
+for example: what are the columns a user wants from a table 
+          or personal profile data sent to the frontend should be based on who requested it. personal prfoile? or someone's profile?
+2. compress handling errors and organize them.
+3. Think of  a way to make blog's content is secure and safe. Where to store them ?
+
