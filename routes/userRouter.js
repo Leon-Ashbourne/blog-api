@@ -1,5 +1,5 @@
 const Router = require('express').Router;
-const { createUserPost, requestUsersGet } = require('../controllers/usersController'); 
+const { requestUsersGet } = require('../controllers/usersController'); 
 
 const userRouter = Router();
 
@@ -25,18 +25,18 @@ userRouter.delete('/:userId', (req, res) => {
 //user routes
 userRouter.get('/', requestUsersGet);
 
-userRouter.post('/', createUserPost);
+//<------ these routes doesn't make sense ------->//
 
-userRouter.put('/', (req, res) => {
-    res.json({
-        message: "users update request"
-    });
-});
+// userRouter.put('/', (req, res) => {
+//     res.json({
+//         message: "users update request"
+//     });
+// });
 
-userRouter.delete('/', (req, res) => {
-    res.json({
-        message: "users delete request"
-    });
-});
+// userRouter.delete('/', (req, res) => {
+//     res.json({
+//         message: "users delete request"
+//     });
+// });
 
 module.exports = userRouter;
