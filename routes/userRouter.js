@@ -1,4 +1,5 @@
 const Router = require('express').Router;
+const { createUserPost } = require('../controllers/usersController'); 
 
 const userRouter = Router();
 
@@ -28,11 +29,7 @@ userRouter.get('/', (req, res) => {
     });
 });
 
-userRouter.post('/', (req, res) => {
-    res.json({
-        message: "users POST request"
-    });
-});
+userRouter.post('/', createUserPost);
 
 userRouter.put('/', (req, res) => {
     res.json({
