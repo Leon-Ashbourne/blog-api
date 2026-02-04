@@ -1,5 +1,5 @@
 const express = require('express');
-const { postRouter, userRouter, commentsRouter } = require('./routes/index');
+const { postRouter, userRouter, commentsRouter, signupRouter } = require('./routes/index');
 
 const app = express();
 app.use(express.json());
@@ -8,6 +8,7 @@ app.use(express.json());
 app.use('/posts', postRouter);
 app.use('/users', userRouter);
 app.use('/comments', commentsRouter);
+app.use('/Sign-up', signupRouter);
 
 const PORT = 5000;
 
