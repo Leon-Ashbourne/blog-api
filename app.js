@@ -2,6 +2,7 @@ const express = require('express');
 const { postRouter, userRouter, commentsRouter } = require('./routes/index');
 
 const app = express();
+app.use(express.json());
 
 //routes
 app.use('/posts', postRouter);
