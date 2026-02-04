@@ -1,5 +1,5 @@
 const { validationResult, matchedData, body } = require('express-validator');
-const { createUser } = require('../models/script');
+const { createUser, getUsers } = require('../models/script');
 
 //create user
 // validate and sanitise user details
@@ -60,6 +60,23 @@ const createUserPost = [
     handleDBError
 ]
 
+//get users
+async function requestUsersGet(req, res) {
+    const { error, data } = await getUsers();
+    
+    if(error) {
+        return res.status(500).json({
+            error,
+            message: "Database Error: Couldn't get data",
+        });
+    }
+
+    return res.json({
+        data,
+    });
+}
+
 module.exports = {
     createUserPost,
+    requestUsersGet
 }

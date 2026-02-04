@@ -1,5 +1,5 @@
 const Router = require('express').Router;
-const { createUserPost } = require('../controllers/usersController'); 
+const { createUserPost, requestUsersGet } = require('../controllers/usersController'); 
 
 const userRouter = Router();
 
@@ -23,11 +23,7 @@ userRouter.delete('/:userId', (req, res) => {
 })
 
 //user routes
-userRouter.get('/', (req, res) => {
-    res.json({
-        message: "users get request"
-    });
-});
+userRouter.get('/', requestUsersGet);
 
 userRouter.post('/', createUserPost);
 
