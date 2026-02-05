@@ -20,6 +20,6 @@ exports.handleDatabaseError = (req, res) => {
     };
 
     return res.json({
-        message: "The request is successfully processesed",
+        message: "Successfully processesed.",
     });
 }
