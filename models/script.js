@@ -10,6 +10,10 @@ const users = {
         username: "old man",
         password: "baldman",
     },
+    3:{
+        username: "lucky man",
+        password: "lucky12",
+    }
 };
 
 async function createUser(username, password) {
@@ -24,7 +28,24 @@ async function getUsers() {
     return { data };
 }
 
+async function updateUserById(userId, data) {
+    //mock update
+    users[userId] = {
+        ...data,
+    };
+    console.log(users);
+}
+
+async function getUserByUsername(username) {
+    //mock
+    const data = users[1];
+    
+    return;
+}
+
 module.exports = {
     createUser,
     getUsers,
+    updateUserById,
+    getUserByUsername
 }
