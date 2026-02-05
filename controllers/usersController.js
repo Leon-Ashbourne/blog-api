@@ -1,5 +1,5 @@
 const { matchedData, body } = require('express-validator');
-const { getUsers, updateUserById, getUserById } = require('../models/script');
+const { getUsers, updateUserById, getUserById, deleteUserData } = require('../models/script');
 const { handleValidationErrors } = require('./errors/errorControllers');
 
 //get users
@@ -83,8 +83,32 @@ const usersByIdGet = [
 ]
 
 
+//delete user
+async function requestDeleteUser(req, res) {
+    const userId = res.locals.userId;
+
+    const error = await deleteUserData(userId);
+
+    if(error){
+        return res.status(503).json({
+            error,
+        });
+    };
+
+    return res.json({
+        message: "Successfully processesed.",
+    });
+}
+
+const userDelete = [ 
+    checkUserId,
+    requestDeleteUser,
+]
+
+
 module.exports = {
     requestUsersGet,
     updateUserPost,
-    usersByIdGet
+    usersByIdGet,
+    userDelete
 }
