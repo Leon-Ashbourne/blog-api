@@ -15,7 +15,7 @@ const validate = [
         .notEmpty().withMessage(reqError)
         .isLength({ min: 5}).withMessage(lenUsernameError)
         .custom(async val => {
-            const data = await getUserByUsername(val);
+            const data = await getUserByUsername(val); //Todo- handle errors from db
             if(data) throw new Error('username already exists.');
 
             return true; 
