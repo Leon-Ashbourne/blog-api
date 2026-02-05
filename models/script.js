@@ -30,16 +30,19 @@ async function getUsers() {
 
 async function updateUserById(userId, data) {
     //mock update
+    const oldValues = users[userId];
     users[userId] = {
-        ...data,
-    };
+        ...oldValues,
+        ...data
+
+    }
+    console.log(data);
     console.log(users);
 }
 
 async function getUserByUsername(username) {
     //mock
     const data = users[1];
-    
     return;
 }
 
