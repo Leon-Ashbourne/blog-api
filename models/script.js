@@ -137,6 +137,13 @@ async function updateComment(commentId, comment) {
     // return error;
 }
 
+async function deleteComment(commentId) {
+    //code
+    console.log(commentId);
+    // const error = new Error("error");
+    // return error;
+}
+
 
 module.exports = {
     createUser,
@@ -152,5 +159,6 @@ module.exports = {
     getCommentById,
     getCommentsByUserId,
     createComment,
-    updateComment
+    updateComment,
+    deleteComment
 }
