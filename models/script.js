@@ -16,6 +16,18 @@ const users = {
     }
 };
 
+//mock posts
+const posts = {
+    1: {
+        title: "First post",
+        authorId: 1,
+    },
+    2: {
+        title: "Second post",
+        authorId: 1,
+    }
+}
+
 async function createUser(username, password) {
     //mock create user
     console.log(username, password);
@@ -53,11 +65,19 @@ async function getUserById(userId) {
     return { data };
 }
 
+async function getPosts() {
+    //mock
+    //const error = new Error("error");
+    //return { error };
+    const data = posts;
+    return { data };
+}
 
 module.exports = {
     createUser,
     getUsers,
     updateUserById,
     getUserByUsername,
-    getUserById
+    getUserById,
+    getPosts,
 }
