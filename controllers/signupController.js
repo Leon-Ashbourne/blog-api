@@ -1,18 +1,32 @@
-const { validationResult, matchedData, body } = require('express-validator');
-const { createUser } = require('../models/script');
-const { handleValidationErrors, handleDatabaseError } = require('./errors/errorControllers');
+const { matchedData, body, validationResult } = require('express-validator');
+const { createUser, getUserByUsername } = require('../models/script');
+const { handleDatabaseError, handleValidationErrors } = require('./errors/errorControllers');
 
 //create user
 // validate and sanitise username and password
-const passMismatch = "Doesn't match Password."
+const reqError = "is required";
+const passMismatch = "Doesn't match Password.";
+const lenUsernameError = "is too short. (Minimum is 5 characters)";
+const lenPasswordError = "is too short. (Minimum is 6 characters)";
+const existUsernameErr = "already exists. Choose a different name";
+
 const validate = [
     body('username').trim()
-        .notEmpty().withMessage("Username is required.")
-        .isLength({ min: 5}),
+        .notEmpty().withMessage(reqError)
+        .isLength({ min: 5}).withMessage(lenUsernameError)
+        .custom(async val => {
+            const data = await getUserByUsername(val);
+            if(data) throw new Error('username already exists.');
+
+            return true; 
+
+        }).withMessage(existUsernameErr),
+
     body('password')
-        .notEmpty().withMessage("Enter a password.")
-        .isLength({ min: 6})
+        .notEmpty().withMessage(reqError)
+        .isLength({ min: 6}).withMessage(lenPasswordError)
         .bail(),
+
     body('confirm-password')
         .notEmpty().withMessage(passMismatch)
         .custom((val, {req}) => {
