@@ -130,6 +130,13 @@ async function createComment(userId, postId, comment) {
     // return error;
 }
 
+async function updateComment(commentId, comment) {
+    console.log(commentId, comment);
+
+    // const error = new Error("error");
+    // return error;
+}
+
 
 module.exports = {
     createUser,
@@ -144,5 +151,6 @@ module.exports = {
     getComments,
     getCommentById,
     getCommentsByUserId,
-    createComment
+    createComment,
+    updateComment
 }

@@ -1,5 +1,5 @@
 const { matchedData, body } = require('express-validator');
-const { getComments, getCommentById, createComment } = require('../models/script');
+const { getComments, getCommentById, createComment, updateComment } = require('../models/script');
 const { handleValidationErrors } = require('./errors/errorControllers');
 
 //get comments
@@ -92,7 +92,6 @@ const commentEmptErr = "is Empty";
 const validate = [
     body('comment').trim()
         .notEmpty().withMessage(commentEmptErr)
-        .escape()
 ]
 
 async function requestCreateComment(req, res) {
@@ -121,9 +120,35 @@ const createCommentPost = [
     requestCreateComment,
 ]
 
+//update a comment
+async function requestUpdateComment(req, res) {
+    const commentId = res.locals.commentId;
+    const { comment } = matchedData(req);
+
+    const error = await updateComment(commentId, comment);
+
+    if(error) {
+        return res.status(503).json({
+            error,
+        })
+    };
+
+    return res.json({
+        message: "Successfully processesed.",
+    });
+}
+
+const updateCommentPut = [
+    checkCommenIdUrl,
+    validate,
+    handleValidationErrors,
+    requestUpdateComment,
+]
+
 module.exports = {
     requestCommentsGet,
     commentGet,
     commentByUserIdGet,
-    createCommentPost
+    createCommentPost,
+    updateCommentPut
 }
