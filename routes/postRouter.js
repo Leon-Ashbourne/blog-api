@@ -1,4 +1,5 @@
 const Router = require("express").Router;
+const { requestPostsGet } = require("../controllers/postsController");
 
 const postRouter = Router();
 
@@ -22,11 +23,7 @@ postRouter.delete('/:postId', (req, res) => {
 });
 
 //post routes
-postRouter.get('/', (req, res) => {
-    res.json({
-        message: "psot get request"
-    });
-})
+postRouter.get('/', requestPostsGet )
 
 postRouter.post('/', (req, res) => {
     res.json({
