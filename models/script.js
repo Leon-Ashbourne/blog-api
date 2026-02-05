@@ -81,6 +81,14 @@ async function getPostById(postId) {
     return { data };
 }
 
+async function getPostsByUserId(userId) {
+    //mock posts
+    const data = posts;
+    const error = new Error("error");
+    
+    return { data };
+}
+
 module.exports = {
     createUser,
     getUsers,
@@ -89,4 +97,5 @@ module.exports = {
     getUserById,
     getPosts,
     getPostById,
+    getPostsByUserId
 }
