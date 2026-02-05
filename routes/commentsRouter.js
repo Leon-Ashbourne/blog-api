@@ -1,4 +1,4 @@
-const { requestCommentsGet, commentGet } = require('../controllers/commentsController');
+const { requestCommentsGet, commentGet, commentByUserIdGet } = require('../controllers/commentsController');
 
 const Router = require('express').Router;
 
@@ -21,6 +21,7 @@ commentsRouter.delete('/:commentId', (req, res) => {
 commentsRouter.get('/', requestCommentsGet);
 
 commentsRouter.get('/:commentId', commentGet);
+commentsRouter.get('/t8ui0e5fhyro712wq9isdkjn/:userId', commentByUserIdGet);
 
 //-----> These roues don't make sense ----->//
 // commentsRouter.post('/', (req, res) => {
