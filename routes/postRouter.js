@@ -1,5 +1,5 @@
 const Router = require("express").Router;
-const { requestPostsGet, postByIdGet } = require("../controllers/postsController");
+const { requestPostsGet, postByIdGet, postsByUserIdGet } = require("../controllers/postsController");
 
 const postRouter = Router();
 
@@ -20,6 +20,7 @@ postRouter.delete('/:postId', (req, res) => {
 postRouter.get('/', requestPostsGet )
 
 postRouter.get('/:postId', postByIdGet);
+postRouter.get('/d4ef65asdf1e88rtt512eo/:userId', postsByUserIdGet )
 
 postRouter.post('/', (req, res) => {
     res.json({
