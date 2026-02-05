@@ -89,6 +89,10 @@ async function getPostsByUserId(userId) {
     return { data };
 }
 
+async function deleteUserData(userID) {
+    //mock
+}
+
 module.exports = {
     createUser,
     getUsers,
@@ -97,5 +101,6 @@ module.exports = {
     getUserById,
     getPosts,
     getPostById,
-    getPostsByUserId
+    getPostsByUserId,
+    deleteUserData
 }
