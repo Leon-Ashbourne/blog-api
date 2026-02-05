@@ -103,7 +103,15 @@ async function deleteUserData(userID) {
 }
 
 async function getComments() {
+    //mock
     const data = comments;
+    return { data };
+}
+
+async function getCommentById(commentId) {
+    //mock
+    const data = comments[commentId];
+
     return { data };
 }
 
@@ -118,5 +126,6 @@ module.exports = {
     getPostById,
     getPostsByUserId,
     deleteUserData,
-    getComments
+    getComments,
+    getCommentById
 }
