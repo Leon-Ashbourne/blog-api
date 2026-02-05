@@ -115,6 +115,14 @@ async function getCommentById(commentId) {
     return { data };
 }
 
+//get comments of a specific user
+async function getCommentsByUserId(userId) {
+    //random data
+    const data = comments;
+    return { data };
+
+}
+
 
 module.exports = {
     createUser,
@@ -127,5 +135,6 @@ module.exports = {
     getPostsByUserId,
     deleteUserData,
     getComments,
-    getCommentById
+    getCommentById,
+    getCommentsByUserId
 }

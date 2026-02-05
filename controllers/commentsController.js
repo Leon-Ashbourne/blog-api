@@ -25,7 +25,7 @@ function checkCommenIdUrl(req, res,  next) {
     }
 
     else return res.status(404).json({
-        message: "Bad url. Illegal commentId",
+        message: "Bad url. Illegal comment's ID",
     });
 }
 
@@ -50,8 +50,43 @@ const commentGet = [
     requestComment
 ]
 
+//get a user's comments
+function checkUserIdUrl(req, res, next) {
+    const userId = parseInt(req.params.userId);
+
+    if(userId) {
+        res.locals.userId = userId;
+        next();
+    }
+
+    else return res.status(404).json({
+        message: "Bad url. Illegal user's ID"
+    })
+}
+
+async function requestCommentByUserId(req, res, next) {
+    const userId = res.locals.userId;
+
+    const { data, error } = await getCommentById(userId);
+
+    if(error) {
+        return res.status(503).json({
+            error,
+        });
+    }
+
+    return res.json({
+        data,
+    });
+}
+
+const commentByUserIdGet = [
+    checkUserIdUrl,
+    requestCommentByUserId
+]
 
 module.exports = {
     requestCommentsGet,
-    commentGet
+    commentGet,
+    commentByUserIdGet
 }
