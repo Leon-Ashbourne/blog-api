@@ -28,6 +28,15 @@ const posts = {
     }
 }
 
+//mock comments
+const comments = {
+    1: {
+        text: "wow, you are awesome",
+        authorId: 1,
+        postId: 1 
+    }
+}
+
 async function createUser(username, password) {
     //mock create user
     console.log(username, password);
@@ -93,6 +102,12 @@ async function deleteUserData(userID) {
     //mock
 }
 
+async function getComments() {
+    const data = comments;
+    return { data };
+}
+
+
 module.exports = {
     createUser,
     getUsers,
@@ -102,5 +117,6 @@ module.exports = {
     getPosts,
     getPostById,
     getPostsByUserId,
-    deleteUserData
+    deleteUserData,
+    getComments
 }
