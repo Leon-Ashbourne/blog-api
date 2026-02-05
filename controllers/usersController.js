@@ -1,12 +1,13 @@
-const { validationResult, matchedData, body } = require('express-validator');
-const { getUsers } = require('../models/script');
+const { matchedData, body } = require('express-validator');
+const { getUsers, updateUserById } = require('../models/script');
+const { handleValidationErrors } = require('./errors/errorControllers');
 
 //get users
 async function requestUsersGet(req, res) {
     const { error, data } = await getUsers();
     
     if(error) {
-        return res.status(500).json({
+        return res.status(503).json({
             error,
             message: "Database Error: Couldn't get data",
         });
@@ -15,8 +16,55 @@ async function requestUsersGet(req, res) {
     return res.json({
         data,
     });
+};
+
+//update user details
+const validate = [
+    body('username').trim()
+        .optional(),
+    body('password')
+        .isLength({ min: 6}).withMessage("is too short.(Minimum is 6 characters)")
+        .optional({ values: 'falsy'}),
+];
+
+function checkUserId(req, res, next) {
+    const userId = parseInt(req.params.userId);
+    if(userId) {
+        res.locals.userId = userId;
+        return next();
+    };
+
+    return res.status(404).json({
+        message: "Bad userId parameter",
+    });
 }
+
+async function requestUpdateUserPost(req, res, next) {
+    const userId = res.locals.userId;
+    const data = matchedData(req, { includeOptionals: false });
+    console.log(data);
+
+    const error = await updateUserById(userId, data);
+
+    if(error) {
+        return res.status(503).json({
+            error
+        });
+    };
+
+    return res.json({
+        message: "Successfully processesed."
+    })
+}
+
+const updateUserPost = [
+    checkUserId,
+    validate,
+    handleValidationErrors,
+    requestUpdateUserPost
+]
 
 module.exports = {
     requestUsersGet,
+    updateUserPost
 }
