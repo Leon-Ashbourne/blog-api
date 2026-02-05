@@ -1,5 +1,5 @@
 const { matchedData, body } = require('express-validator');
-const { getComments, getCommentById, createComment, updateComment } = require('../models/script');
+const { getComments, getCommentById, createComment, updateComment, deleteComment } = require('../models/script');
 const { handleValidationErrors } = require('./errors/errorControllers');
 
 //get comments
@@ -145,10 +145,33 @@ const updateCommentPut = [
     requestUpdateComment,
 ]
 
+//delete commment
+async function requestCommentDelete(req, res) {
+    const commentId = res.locals.commentId;
+
+    const error = await deleteComment(commentId);
+
+    if(error) {
+        return res.status(503).json({
+            error,
+        });
+    };
+
+    return res.json({
+        message: "Successfully processesed.",
+    });
+}
+
+const commentDelete = [
+    checkCommenIdUrl,
+    requestCommentDelete
+]
+
 module.exports = {
     requestCommentsGet,
     commentGet,
     commentByUserIdGet,
     createCommentPost,
-    updateCommentPut
+    updateCommentPut,
+    commentDelete
 }
