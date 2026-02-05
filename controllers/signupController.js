@@ -1,21 +1,18 @@
 const { validationResult, matchedData, body } = require('express-validator');
 const { createUser } = require('../models/script');
+const { handleValidationErrors, handleDatabaseError } = require('./errors/errorControllers');
 
 //create user
 // validate and sanitise username and password
 const passMismatch = "Doesn't match Password."
 const validate = [
     body('username').trim()
-        .notEmpty().withMessage("Username is required."),
+        .notEmpty().withMessage("Username is required.")
+        .isLength({ min: 5}),
     body('password')
         .notEmpty().withMessage("Enter a password.")
         .isLength({ min: 6})
         .bail(),
-
-]
-
-//validte confirm-password field
-const validateConfirmPassword = [
     body('confirm-password')
         .notEmpty().withMessage(passMismatch)
         .custom((val, {req}) => {
@@ -23,18 +20,8 @@ const validateConfirmPassword = [
             if(val === password) return true;
             return false;
         }).withMessage(passMismatch)
+
 ]
-
-function handleValidationErrors(req, res, next) {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.status(422).json({
-            errors
-        })
-    }
-
-    next()
-}
 
 async function reqCreateUserDB(req,  res, next) {
 
@@ -45,25 +32,11 @@ async function reqCreateUserDB(req,  res, next) {
     next();
 }
 
-function handleDBError(req, res) {
-    const userError = res.locals.createUserError;
-    if(userError) {
-        return res.status(500).json({
-            error: userError,
-        });
-    };
-
-    return res.status(201).json({
-        message: "The request is successfully processesed",
-    });
-}
-
 const createUserPost = [
     validate,
-    validateConfirmPassword,
     handleValidationErrors,
     reqCreateUserDB,
-    handleDBError
+    handleDatabaseError
 ]
 
-module.exports = createUserPost;
+module.exports = createUserPost
