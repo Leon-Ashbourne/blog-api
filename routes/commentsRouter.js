@@ -1,14 +1,10 @@
+const { requestCommentsGet, commentGet } = require('../controllers/commentsController');
+
 const Router = require('express').Router;
 
 const commentsRouter = Router();
 
 //specific comment routes
-commentsRouter.get('/:commentId', (req, res) => {
-    res.json({
-        message: `get comment with id ${req.params.commentId}`
-    });
-});
-
 commentsRouter.put('/:commentId', (req, res) => {
     res.json({
         message: `update comment with id ${req.params.commentId}`
@@ -22,28 +18,27 @@ commentsRouter.delete('/:commentId', (req, res) => {
 })
 
 //comments routes
-commentsRouter.get('/', (req, res) => {
-    res.json({
-        message: "comments get request"
-    });
-});
+commentsRouter.get('/', requestCommentsGet);
 
-commentsRouter.post('/', (req, res) => {
-    res.json({
-        message: "comments POST request"
-    });
-});
+commentsRouter.get('/:commentId', commentGet);
 
-commentsRouter.put('/', (req, res) => {
-    res.json({
-        message: "comments update request"
-    });
-});
+//-----> These roues don't make sense ----->//
+// commentsRouter.post('/', (req, res) => {
+//     res.json({
+//         message: "comments POST request"
+//     });
+// });
 
-commentsRouter.delete('/', (req, res) => {
-    res.json({
-        message: "comments delete request"
-    });
-});
+// commentsRouter.put('/', (req, res) => {
+//     res.json({
+//         message: "comments update request"
+//     });
+// });
+
+// commentsRouter.delete('/', (req, res) => {
+//     res.json({
+//         message: "comments delete request"
+//     });
+// });
 
 module.exports = commentsRouter;
