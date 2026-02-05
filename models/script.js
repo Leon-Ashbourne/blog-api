@@ -73,6 +73,14 @@ async function getPosts() {
     return { data };
 }
 
+async function getPostById(postId) {
+    const data = posts[postId];
+
+    const error = new Error("error");
+    // return { error };
+    return { data };
+}
+
 module.exports = {
     createUser,
     getUsers,
@@ -80,4 +88,5 @@ module.exports = {
     getUserByUsername,
     getUserById,
     getPosts,
+    getPostById,
 }
