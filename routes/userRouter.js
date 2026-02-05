@@ -1,20 +1,14 @@
 const Router = require('express').Router;
-const { requestUsersGet, updateUserPost, usersByIdGet } = require('../controllers/usersController'); 
+const { requestUsersGet, updateUserPost, usersByIdGet, userDelete } = require('../controllers/usersController'); 
 
 const userRouter = Router();
-
-userRouter.delete('/:userId', (req, res) => {
-    res.json({
-        message: `delete user with id ${req.params.userId}`
-    })
-})
 
 //user routes
 userRouter.get('/', requestUsersGet);
 
 userRouter.put('/:userId', updateUserPost);
 userRouter.get('/:userId', usersByIdGet);
-
+userRouter.delete('/:userId', userDelete);
 
 //<------ these routes don't make sense ------->//
 
