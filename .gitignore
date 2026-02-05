@@ -1,5 +1,7 @@
 node_modules
 /generated/prisma
 
+/models/script.main.js
+api.logs.txt
 api.logs.txt
 .env
