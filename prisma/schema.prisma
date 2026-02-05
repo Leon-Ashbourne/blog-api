@@ -14,31 +14,37 @@ datasource db {
 }
 
 model Users {
-  id       Int        @id @default(autoincrement())
-  username String
-  password String
-  email    String     @unique
-  role     ROLE       @default(USER)
-  posts    Posts[]
-  comments Comments[]
+  id        Int        @id @default(autoincrement())
+  username  String
+  password  String
+  email     String     @unique
+  role      ROLE       @default(USER)
+  posts     Posts[]
+  comments  Comments[]
+  createdAt DateTime   @default(now())
 }
 
 model Posts {
   id        Int        @id @default(autoincrement())
   title     String
+  path      String
   published Boolean    @default(false)
   author    Users      @relation(fields: [authorId], references: [id])
   comment   Comments[]
   authorId  Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model Comments {
-  id       Int    @id @default(autoincrement())
-  text     String
-  author   Users  @relation(fields: [authorId], references: [id])
-  post     Posts  @relation(fields: [postId], references: [id])
-  authorId Int
-  postId   Int
+  id        Int      @id @default(autoincrement())
+  text      String
+  author    Users    @relation(fields: [authorId], references: [id])
+  post      Posts    @relation(fields: [postId], references: [id])
+  authorId  Int
+  postId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum ROLE {
