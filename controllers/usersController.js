@@ -1,5 +1,5 @@
 const { matchedData, body } = require('express-validator');
-const { getUsers, updateUserById } = require('../models/script');
+const { getUsers, updateUserById, getUserById } = require('../models/script');
 const { handleValidationErrors } = require('./errors/errorControllers');
 
 //get users
@@ -42,7 +42,6 @@ function checkUserId(req, res, next) {
 async function requestUpdateUserPost(req, res, next) {
     const userId = res.locals.userId;
     const data = matchedData(req, { includeOptionals: false });
-    console.log(data);
 
     const error = await updateUserById(userId, data);
 
@@ -54,7 +53,7 @@ async function requestUpdateUserPost(req, res, next) {
 
     return res.json({
         message: "Successfully processesed."
-    })
+    });
 }
 
 const updateUserPost = [
@@ -64,7 +63,28 @@ const updateUserPost = [
     requestUpdateUserPost
 ]
 
+//get user details 
+async function requestUserById(req, res) {
+    const userId = res.locals.userId;
+    const { data, error } = await getUserById(userId);
+
+    if(error) {
+        return res.status(503).json({
+            error
+        });
+    };
+
+    return res.json({ data });
+}
+
+const usersByIdGet = [
+    checkUserId,
+    requestUserById
+]
+
+
 module.exports = {
     requestUsersGet,
-    updateUserPost
+    updateUserPost,
+    usersByIdGet
 }

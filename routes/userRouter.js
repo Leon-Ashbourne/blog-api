@@ -1,14 +1,7 @@
 const Router = require('express').Router;
-const { requestUsersGet, updateUserPost } = require('../controllers/usersController'); 
+const { requestUsersGet, updateUserPost, usersByIdGet } = require('../controllers/usersController'); 
 
 const userRouter = Router();
-
-//specific user routes
-userRouter.get('/:userId', (req, res) => {
-    res.json({
-        message: `get user with id ${req.params.userId}`
-    });
-});
 
 userRouter.delete('/:userId', (req, res) => {
     res.json({
@@ -18,7 +11,10 @@ userRouter.delete('/:userId', (req, res) => {
 
 //user routes
 userRouter.get('/', requestUsersGet);
+
 userRouter.put('/:userId', updateUserPost);
+userRouter.get('/:userId', usersByIdGet);
+
 
 //<------ these routes don't make sense ------->//
 
