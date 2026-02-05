@@ -123,6 +123,13 @@ async function getCommentsByUserId(userId) {
 
 }
 
+async function createComment(userId, postId, comment) {
+    //code to create a new comment
+    console.log(userId, postId, comment);
+    const error = new Error("error");
+    // return error;
+}
+
 
 module.exports = {
     createUser,
@@ -136,5 +143,6 @@ module.exports = {
     deleteUserData,
     getComments,
     getCommentById,
-    getCommentsByUserId
+    getCommentsByUserId,
+    createComment
 }
