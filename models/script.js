@@ -46,9 +46,18 @@ async function getUserByUsername(username) {
     return;
 }
 
+async function getUserById(userId) {
+    //mock
+    const data = users[userId];
+    //const error = new Error("error");
+    return { data };
+}
+
+
 module.exports = {
     createUser,
     getUsers,
     updateUserById,
-    getUserByUsername
+    getUserByUsername,
+    getUserById
 }
