@@ -3,5 +3,4 @@ node_modules
 
 /models/script.main.js
 api.logs.txt
-api.logs.txt
 .env
