@@ -144,6 +144,11 @@ async function deleteComment(commentId) {
     // return error;
 }
 
+async function deletePost(postId) {
+    //code
+    console.log(postId);
+}
+
 
 module.exports = {
     createUser,
@@ -160,5 +165,6 @@ module.exports = {
     getCommentsByUserId,
     createComment,
     updateComment,
-    deleteComment
+    deleteComment,
+    deletePost,
 }
