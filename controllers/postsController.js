@@ -16,10 +16,14 @@ async function requestPostsGet(req, res) {
 };
 
 //create a new post
+//Try- use supabase to store blog contents as a file
 async function requestCreatePost(req, res, next) {
     // Todo- how to secure and store blog content
 }
 
+const postCreate = [
+    //middlewares
+]
 
 //get a single post by its id
 function checkPostIdUrl(req, res, next) {
@@ -94,5 +98,6 @@ const postsByUserIdGet = [
 module.exports = {
     requestPostsGet,
     postByIdGet,
-    postsByUserIdGet
+    postsByUserIdGet,
+    postCreate
 }
