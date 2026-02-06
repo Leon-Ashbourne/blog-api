@@ -1,4 +1,4 @@
-const { getPosts, getPostById, getPostsByUserId, deletePost } = require('../models/script');
+const { getPosts, getPostById, getPostsByUserId, deletePost, updatePost } = require('../models/script');
 
 //get posts 
 async function requestPostsGet(req, res) {
@@ -17,6 +17,7 @@ async function requestPostsGet(req, res) {
 
 //create a new post
 //Try- use supabase to store blog contents as a file
+//Todo- validation
 async function requestCreatePost(req, res, next) {
     // Todo- how to secure and store blog content
 }
@@ -117,10 +118,36 @@ const postDelete = [
     requestPostDelete
 ]
 
+//update post
+//Todo- validation
+async function requestPostUpdate(req, res) {
+    const postId = res.locals.postId;
+    // const { title, content } = matchedData(req);
+    //mock data
+    const data = {};
+    const error = await updatePost(postId, data);
+
+    if(error) {
+        return res.status(503).json({
+            error,
+        })
+    };
+
+    return res.json({
+        message: "Successfully processesed.",
+    });
+}
+
+const postUpdate = [
+    checkPostIdUrl,
+    requestPostUpdate
+]
+
 module.exports = {
     requestPostsGet,
     postByIdGet,
     postsByUserIdGet,
     postCreate,
-    postDelete
+    postDelete,
+    postUpdate
 }
