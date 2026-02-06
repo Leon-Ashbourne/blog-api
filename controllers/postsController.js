@@ -1,4 +1,4 @@
-const { getPosts, getPostById, getPostsByUserId } = require('../models/script');
+const { getPosts, getPostById, getPostsByUserId, deletePost } = require('../models/script');
 
 //get posts 
 async function requestPostsGet(req, res) {
@@ -94,10 +94,33 @@ const postsByUserIdGet = [
     requestPostsByUserId
 ]
 
+//delete post
+//write a middleware to delete blog content from supabase if you use it to store the content as a file 
+async function requestPostDelete(req, res) {
+    const postId = res.locals.postId;
+
+    const error = await deletePost(postId);
+
+    if(error) {
+        return res.status(503).json({
+            error,
+        });
+    }
+
+    return res.json({
+        message: "Successfully processesed.",
+    });
+}
+
+const postDelete = [
+    checkPostIdUrl,
+    requestPostDelete
+]
 
 module.exports = {
     requestPostsGet,
     postByIdGet,
     postsByUserIdGet,
-    postCreate
+    postCreate,
+    postDelete
 }
