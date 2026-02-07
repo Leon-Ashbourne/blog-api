@@ -1,5 +1,6 @@
 const express = require('express');
-const { postRouter, userRouter, commentsRouter, signupRouter } = require('./routes/index');
+const { postRouter, userRouter, commentsRouter, signupRouter, signinRouter } = require('./routes/index');
+const passport = require('./authentication/passport');
 
 const app = express();
 app.use(express.json());
@@ -7,8 +8,9 @@ app.use(express.json());
 //routes
 app.use('/posts', postRouter);
 app.use('/users', userRouter);
-app.use('/comments', commentsRouter);
+app.use('/comments', passport.authenticate('jwt', { session: false }), commentsRouter);
 app.use('/Sign-up', signupRouter);
+app.use('/Sign-in', signinRouter);
 
 const PORT = 5000;
 
