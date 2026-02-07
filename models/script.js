@@ -164,7 +164,7 @@ async function getUserLogin(credentials) {
         email: "first@gmail.com",
     };
 
-    return data;
+    return { data };
 }
 
 module.exports = {
