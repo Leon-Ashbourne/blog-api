@@ -24,14 +24,21 @@ async function verifyUser(req, res, next) {
             error,
         });
     };
+
     res.locals.data = data;
+    console.log(data);
     next();
 }
 
 function generateToken(req, res) {
     const payload = res.locals.data;
 
-    jwt.sign(payload, process.env.SECRET_KEY, { algorithm: 'RS256' }, (error, token) => {
+    jwt.sign(payload, process.env.SECRET_KEY, (error, token) => {
+        if(error) {
+            return res.json({
+                error,
+            });
+        }
         return res.json({
             Token: token
         });
