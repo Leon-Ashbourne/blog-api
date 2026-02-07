@@ -155,6 +155,18 @@ async function updatePost(postId) {
     // return new Error("error");
 }
 
+async function getUserLogin(credentials) {
+    //code
+    //mock
+    console.log(credentials);
+    const data = {
+        username: "first person",
+        email: "first@gmail.com",
+    };
+
+    return data;
+}
+
 module.exports = {
     createUser,
     getUsers,
@@ -172,5 +184,6 @@ module.exports = {
     updateComment,
     deleteComment,
     deletePost,
-    updatePost
+    updatePost,
+    getUserLogin
 }
