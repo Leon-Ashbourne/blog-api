@@ -9,7 +9,9 @@ app.use(express.json());
 app.use('/posts', postRouter);
 app.use('/users', userRouter);
 app.use('/comments', passport.authenticate('jwt', { session: false }), commentsRouter);
-app.use('/Sign-up', signupRouter);
+app.use('/Sign-up', (req, res) => {
+    res.setHeaders["Access-Control-Allow-Origin"] = "localhost:5173";
+},signupRouter);
 app.use('/Sign-in', signinRouter);
 
 const PORT = 5000;
