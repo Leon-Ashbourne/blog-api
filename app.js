@@ -5,7 +5,7 @@ const passport = require('./authentication/passport');
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = ["localhost:5173"]
+const allowedOrigins = ["http://localhost:5173"]
 app.use((req, res, next) => {
     const origin = req.headers.origin;
 
