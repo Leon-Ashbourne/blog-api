@@ -1,189 +1,314 @@
 const prisma = require('./prisma');
 
-//mock data
-const users = {
-    1: {
-        username: "priest",
-        password: "123456",
-    },
-    2: {
-        username: "old man",
-        password: "baldman",
-    },
-    3:{
-        username: "lucky man",
-        password: "lucky12",
-    }
-};
-
-//mock posts
-const posts = {
-    1: {
-        title: "First post",
-        authorId: 1,
-    },
-    2: {
-        title: "Second post",
-        authorId: 1,
+//create user
+async function createUser(user) {
+    try {
+        await prisma.users.create({
+            data: {
+                ...user
+            },
+        });
+    }catch (error) {
+        return error;
     }
 }
 
-//mock comments
-const comments = {
-    1: {
-        text: "wow, you are awesome",
-        authorId: 1,
-        postId: 1 
-    }
-}
-
-async function createUser(username, password) {
-    //mock create user
-    console.log(username, password);
-    return;
-} 
-
+//get users
 async function getUsers() {
-    //mock user data
-    const data = users;
-    return { data };
-}
+    try {
+        const data = await prisma.users.findMany({
+            select: {
+                username: true,
+                id: true,
+            },
+        });
 
-async function updateUserById(userId, data) {
-    //mock update
-    const oldValues = users[userId];
-    users[userId] = {
-        ...oldValues,
-        ...data
-
+        return { data };
+    }catch(error) {
+        return { error }
     }
-    console.log(data);
-    console.log(users);
 }
 
+//get user by username
 async function getUserByUsername(username) {
-    //mock
-    const data = users[1];
-    return;
+    try {
+        const data = await prisma.users.findFirst({
+            where: {
+                username,
+            },
+        })
+
+        return { data };
+    }catch(error) {
+        return { error };
+    }
 }
 
+//update user by id
+async function updateUserById(userId, data) {
+    try {
+        await prisma.users.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                ...data,
+            },
+        });
+    }catch (error) {
+        return error;
+    }
+}
+
+//get user by ID
 async function getUserById(userId) {
-    //mock
-    const data = users[userId];
-    //const error = new Error("error");
-    return { data };
+    try {
+        const data = await prisma.users.findFirst({
+            where: {
+                id: userId,
+            },
+            select: {
+                username: true,
+                include: {
+                    posts: true,
+                }
+            }
+        });
+
+        return { data };
+    }catch (error) {
+        return { error };
+    }
 }
 
+//get posts 
 async function getPosts() {
-    //mock
-    //const error = new Error("error");
-    //return { error };
-    const data = posts;
-    return { data };
+    try {
+        const data = await prisma.posts.findMany();
+
+        return { data };
+    }catch (error) {
+        return { error };
+    }
 }
 
-async function getPostById(postId) {
-    const data = posts[postId];
-
-    const error = new Error("error");
-    // return { error };
-    return { data };
-}
-
+//get posts of a user
 async function getPostsByUserId(userId) {
-    //mock posts
-    const data = posts;
-    const error = new Error("error");
-    
-    return { data };
+    try {
+        const data = await prisma.posts.findMany({
+            where: {
+                authorId: userId,
+            },
+        });
+
+        return { data };
+    }catch (error) {
+        return { error };
+    }
 }
 
-async function deleteUserData(userID) {
-    //mock
+//delete a user
+const deleteComments = async (userId) => {
+    return await prisma.comments.delete({
+        where: {
+            authorId: userId,
+        }
+    });
 }
 
-async function getComments() {
-    //mock
-    const data = comments;
-    return { data };
+const deletePosts = async (userId) => {
+    return await prisma.posts.delete({
+        where: {
+            authorId: userId,
+        }
+    });
 }
 
+const deleteUser = async (userId) => {
+    return await prisma.users.delete({
+        where: {
+            id: userId,
+        }
+    });
+}
+
+const deleteUserData = async () => { 
+    try {
+        await prisma.$transaction([ deleteComments, deletePosts, deleteUser ]);
+    }catch (error) {
+        return { error };
+    }
+ }
+
+//get comment
 async function getCommentById(commentId) {
-    //mock
-    const data = comments[commentId];
+    try {
+        const data = await prisma.comments.findFirst({
+            where: {
+                id: commentId,
+            },
+        });
 
-    return { data };
+        return { data };
+    }catch (error) {
+        return { error };
+    }
 }
 
-//get comments of a specific user
+//get comments for specific user
 async function getCommentsByUserId(userId) {
-    //random data
-    const data = comments;
-    return { data };
+    try {
+        const data = await prisma.comments.findMany({
+            where: {
+                authorId: userId
+            },
+        });
 
+        return { data };
+    }catch (error) {
+        return { error };
+    }
 }
 
+//create comment
 async function createComment(userId, postId, comment) {
-    //code to create a new comment
-    console.log(userId, postId, comment);
-    const error = new Error("error");
-    // return error;
+    try {
+        await prisma.comments.create({
+            data: {
+                text: comment,
+                post: {
+                    connect: { id: postId }
+                },
+                author: {
+                    connect: {id: userId}
+                }
+            }
+        })
+    }catch(error) {
+        error;
+    }
 }
 
+//update comment
 async function updateComment(commentId, comment) {
-    console.log(commentId, comment);
-
-    // const error = new Error("error");
-    // return error;
+    try {
+        await prisma.comments.update({
+            where: {
+                id: commentId,
+            },
+            data: {
+                text: comment,
+            },
+        });
+    }catch (error) {
+        return error;
+    }
 }
 
+//delete comment
 async function deleteComment(commentId) {
-    //code
-    console.log(commentId);
-    // const error = new Error("error");
-    // return error;
+    try {
+        await prisma.users.delete({
+            where: {
+                id: commentId,
+            },
+        });
+    }catch(error) {
+        return error;
+    }
 }
 
-async function deletePost(postId) {
-    //code
-    console.log(postId);
+//delete post
+const deleteCommentFromPost = async (postId) => {
+    await prisma.comments.delete({
+        where: {
+            postId,
+        }
+    });
 }
 
-async function updatePost(postId) {
-    //code 
-    console.log(postId);
-    // return new Error("error");
+const deletePost = async (postId) => {
+    await prisma.posts.delete({
+        where: {
+            id: postId
+        },
+    });
 }
 
+const deletePostData = [
+    deleteCommentFromPost,
+    deletePost
+]
+
+//update post
+async function updatePost(postId, data) {
+    try {
+        await prisma.posts.update({
+            where: {
+                id: postId
+            },
+            data: {
+                ...data
+            }
+        })
+    }catch (error) {
+        return error;
+    }
+}
+
+//get user for login
 async function getUserLogin(credentials) {
-    //code
-    //mock
-    console.log(credentials);
-    const data = {
-        username: "first person",
-        email: "first@gmail.com",
-    };
+    try {
+        const data = await prisma.users.findFirst({
+            where: {
+                ...credentials,
+            },
+            select: {
+                username: true,
+                id: true,
+            },
+        });
 
-    return { data };
+        return { data };
+    }catch ( error ) {
+        return { error };
+    }
+}
+
+//get password by username
+async function getPasswordByUsername(username) {
+    try {
+        const data = await prisma.users.findFirst({
+            where: {
+                username,
+            },
+            select: {
+                password: true,
+                id: true
+            },
+        });
+
+        return { data };
+    }catch( error) {
+        return { error };
+    }
 }
 
 module.exports = {
     createUser,
     getUsers,
-    updateUserById,
     getUserByUsername,
+    updateUserById,
     getUserById,
     getPosts,
-    getPostById,
     getPostsByUserId,
     deleteUserData,
-    getComments,
     getCommentById,
     getCommentsByUserId,
     createComment,
     updateComment,
-    deleteComment,
-    deletePost,
+    deletePostData,
     updatePost,
-    getUserLogin
+    getUserLogin,
+    getPasswordByUsername
 }
