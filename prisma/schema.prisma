@@ -17,7 +17,6 @@ model Users {
   id        Int        @id @default(autoincrement())
   username  String
   password  String
-  email     String     @unique
   role      ROLE       @default(USER)
   posts     Posts[]
   comments  Comments[]
