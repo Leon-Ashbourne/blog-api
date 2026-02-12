@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 const { matchedData, body, validationResult } = require('express-validator');
 const { createUser, getUserByUsername } = require('../models/script');
 const { handleDatabaseError, handleValidationErrors } = require('./errors/errorControllers');
@@ -15,7 +17,7 @@ const validate = [
         .notEmpty().withMessage(reqError)
         .isLength({ min: 5}).withMessage(lenUsernameError)
         .custom(async val => {
-            const data = await getUserByUsername(val); //Todo- handle errors from db
+            const { data, error } = await getUserByUsername(val); //Todo- handle errors from db
             if(data) throw new Error('username already exists.');
 
             return true; 
@@ -37,18 +39,30 @@ const validate = [
 
 ]
 
+async function hashPassword(req, res, next) {
+    const { password } = matchedData(req);
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    res.locals.hashedPassword = hashedPassword;
+    next();
+}
+
 async function reqCreateUserDB(req,  res, next) {
 
-    const { password, username } = matchedData(req);
-    const error = await createUser(password, username );
+    const { username } = matchedData(req);
+    const password = res.locals.hashedPassword;
 
-    res.locals.createUserError = error;
+    const error = await createUser({ password, username });
+
+    if(error) res.locals.createUserError = error;
     next();
 }
 
 const createUserPost = [
     validate,
     handleValidationErrors,
+    hashPassword,
     reqCreateUserDB,
     handleDatabaseError
 ]
