@@ -294,6 +294,19 @@ async function getPasswordByUsername(username) {
     }
 }
 
+//create post
+async function createPost(post) {
+    try{
+        await prisma.posts.create({
+            data: {
+                ...post,
+            },
+        });
+    }catch (error) {
+        return error;
+    }
+}
+
 module.exports = {
     createUser,
     getUsers,
@@ -310,5 +323,7 @@ module.exports = {
     deletePostData,
     updatePost,
     getUserLogin,
-    getPasswordByUsername
+    getPasswordByUsername,
+    deleteComment,
+    createPost
 }
