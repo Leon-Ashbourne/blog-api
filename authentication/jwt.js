@@ -27,6 +27,12 @@ async function verifyUser(req, res, next) {
         });
     };
 
+    if(!data) {
+        return res.status(406).json({
+            message: "username or password is incorrect."
+        })
+    }
+
     const foundUser = await bcrypt.compare(password, data.password);
     if(!foundUser) {
         return res.status(406).json({
