@@ -1,11 +1,12 @@
 const Router = require("express").Router;
-const { requestPostsGet, postByIdGet, postsByUserIdGet, postDelete, postUpdate } = require("../controllers/postsController");
+const passport = require("../authentication/passport");
+const { requestPostsGet, postByIdGet, postsByUserIdGet, postDelete, postUpdate, postCreate } = require("../controllers/postsController");
 
 const postRouter = Router();
 
 //post routes
 postRouter.get('/', requestPostsGet )
-// postRouter.post('/', )
+postRouter.post('/', passport.authenticate('jwt', { session: false, failureMessage: "authentication failed" }) ,postCreate)
 
 postRouter.get('/:postId', postByIdGet);
 postRouter.delete('/:postId', postDelete);
