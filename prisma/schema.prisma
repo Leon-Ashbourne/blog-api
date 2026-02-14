@@ -27,6 +27,7 @@ model Posts {
   id        Int        @id @default(autoincrement())
   title     String
   content   String
+  media     String[]
   published Boolean    @default(false)
   author    Users      @relation(fields: [authorId], references: [id])
   comment   Comments[]
