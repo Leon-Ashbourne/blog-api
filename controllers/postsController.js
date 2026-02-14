@@ -1,4 +1,10 @@
-const { getPosts, getPostById, getPostsByUserId, deletePost, updatePost } = require('../models/script');
+const { validationResult, matchedData, body } = require('express-validator');
+const { decode } = require('base64-arraybuffer');
+const multer = require('multer');
+
+const { getPosts, getPostById, getPostsByUserId, deletePost, updatePost, createPost } = require('../models/script');
+const { handleValidationErrors } = require('./errors/errorControllers');
+const { uploadMedia } = require('../models/supabase');
 
 //get posts 
 async function requestPostsGet(req, res) {
@@ -16,14 +22,116 @@ async function requestPostsGet(req, res) {
 };
 
 //create a new post
-//Try- use supabase to store blog contents as a file
-//Todo- validation
+//configure multer
+const options = {
+    storage: multer.memoryStorage()
+}
+const upload = multer(options).array('media', 4);
+
+function handleMedia(req, res, next) {
+    upload(req, res, (err) => {
+        if(err instanceof multer.MulterError) {
+            return res.status(413).json({
+                MulterError: err
+            })
+        }
+        else if(err) {
+            return res.status(500).json({
+                error: err
+            })
+        }
+        
+        next();
+    })
+}
+
+//validation
+const emptyErr = "is empty"
+const validate = [
+    body('title').trim()
+        .notEmpty().withMessage(emptyErr),
+    
+    body('content').trim()
+        .notEmpty().withMessage(emptyErr)
+]
+
+function fileToBase64(req, res, next) {
+
+    if(!req.files) return next();
+
+    const files = req.files;
+
+    const base64Files = files.map( file => {
+        const base64File = decode(file.buffer.toString('base64'));
+        const filename = file.originalname + '-' + Math.random()*1e7 + file.fieldname;
+        return { base64File, filename };
+    });
+
+    res.locals.base64Files = base64Files;
+    next();
+}
+
+async function uploadMediaToSupabase(req, res, next) {
+    if(!req.files)return next();
+
+    const username = req.user.username;
+    const promises = res.locals.base64Files.map(file => {
+        const path = username + '/' + filename;
+        const media = file.base64File;
+
+        return uploadMedia(media, username, path);
+    })
+
+    await Promise.all(promises);
+    next();
+}
+
 async function requestCreatePost(req, res, next) {
-    // Todo- how to secure and store blog content
+    const { content, title } = matchedData(req);
+
+    const authorId = parseInt(req.user.id);
+    if(!authorId) {
+        return res.status(400).json({
+            error: "user can't be identified"
+        })
+    }
+
+    //post body
+    const credentials = {
+        content, 
+        title,
+        authorId
+    }
+
+    if(req.files) {
+    const media = res.locals.base64Files.map(file => {
+        return file.filename;
+    });
+
+    credentials.media = media;
+    }
+    
+
+    const error = await createPost(credentials);
+
+    if(error) {
+        return res.status(500).json({
+            error
+        })
+    }
+
+    return res.json({
+        message: "Successfully processesed."
+    })
 }
 
 const postCreate = [
-    //middlewares
+   validate,
+   handleValidationErrors,
+   handleMedia,
+   fileToBase64,
+   uploadMediaToSupabase,
+   requestCreatePost
 ]
 
 //get a single post by its id
