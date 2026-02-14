@@ -11,7 +11,8 @@ options.secretOrKey = process.env.SECRET_KEY;
 passport.use(new JwtStrategy(
     options,
     async (payload, done) => {
-        const { data, error } = await getUserLogin(payload);
+        const credentials = { id: payload.id, username: payload.username };
+        const { data, error } = await getUserLogin(credentials);
 
         if(error) return done(error, false)
         else if(data) return done(null, data)
