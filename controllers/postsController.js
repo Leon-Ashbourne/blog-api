@@ -91,8 +91,8 @@ async function requestCreatePost(req, res, next) {
 
     const authorId = parseInt(req.user.id);
     if(!authorId) {
-        return res.status(400).json({
-            error: "user can't be identified"
+        return res.status(401).json({
+            error: "Unauthenticated user"
         })
     }
 
@@ -136,7 +136,7 @@ const postCreate = [
 
 //get a single post by its id
 function checkPostIdUrl(req, res, next) {
-    const postId = parseInt(req.params.postId);
+    const postId = parseInt(req.params);
 
     if(postId) {
         res.locals.postId = postId;
@@ -149,8 +149,13 @@ function checkPostIdUrl(req, res, next) {
 }
 
 async function requestPostById(req, res) {
-    const postId = res.locals.postId;
+    const postId = parseInt(req.user.id);
 
+    if(!postId) {
+        return res.status(401).json({
+            error: "Bad url."
+        })
+    }
     const { data, error } = await getPostById(postId);
 
     if(error) {
@@ -164,21 +169,21 @@ async function requestPostById(req, res) {
 }
 
 const postByIdGet = [ 
-    checkPostIdUrl,
-    requestPostById
+    // checkPostIdUrl,
+    // requestPostById
 ]
 
 //get particular user's posts
 function checkUserIdUrl(req, res, next) {
-    const userId = parseInt(req.params.userId);
+    const userId = parseInt(req.user.id);
 
     if(userId) {
         res.locals.userId = userId;
-        next();
+        return next();
     }
 
-    else return res.status(404).json({
-        message: "Bad url. illegal postid",
+    return res.status(401).json({
+        message: "Unauthenticated user",
     });
 }
 
@@ -198,7 +203,7 @@ async function requestPostsByUserId(req, res) {
     });
 }
 
-const postsByUserIdGet = [
+const postsGet = [
     checkUserIdUrl,
     requestPostsByUserId
 ]
@@ -254,7 +259,7 @@ const postUpdate = [
 module.exports = {
     requestPostsGet,
     postByIdGet,
-    postsByUserIdGet,
+    postsGet,
     postCreate,
     postDelete,
     postUpdate
