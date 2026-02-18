@@ -82,9 +82,16 @@ async function getUserById(userId) {
 }
 
 //get posts 
-async function getPosts() {
+async function getPublicPosts(start, end) {
+    const total = end-start;
     try {
-        const data = await prisma.posts.findMany();
+        const data = await prisma.posts.findMany({
+            take: total,
+            skip: start,
+            where: {
+                published: true,
+            }
+        });
 
         return { data };
     }catch (error) {
@@ -313,7 +320,7 @@ module.exports = {
     getUserByUsername,
     updateUserById,
     getUserById,
-    getPosts,
+    getPublicPosts,
     getPostsByUserId,
     deleteUserData,
     getCommentById,
