@@ -14,9 +14,7 @@ async function publicPostsGet(req, res) {
 
     if(isNaN(start) || isNaN(end)) return  res.status(404).end();
 
-    const id = -1;
-    if(req.user) id = parseInt(req.user.id);
-    const { data, error } = await getPublicPosts(start, end, id);
+    const { data, error } = await getPublicPosts(start, end);
 
     if(error) {
         return res.status(503).json({ 
