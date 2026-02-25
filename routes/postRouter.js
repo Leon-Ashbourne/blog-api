@@ -11,10 +11,9 @@ postRouter.get('/search', publicPostsGet)
 postRouter.post('/', passport.authenticate('jwt', { session: false, failureMessage }) ,postCreate);
 
 postRouter.get('/', passport.authenticate('jwt', { session: false, failureMessage }), postsGet);
-postRouter.delete('/:postId', postDelete);
-postRouter.put('/:postId', postUpdate);
+postRouter.delete('/:postId',  passport.authenticate('jwt', { session: false, failureMessage }), postDelete);
+postRouter.put('/:postid',  passport.authenticate('jwt', { session: false, failureMessage }), updatePostPut)
 
-postRouter.put('/publish/:postId', updatePublishPut);
-postRouter.put('/update/:postid', updatePostPut)
+postRouter.put('/publish/:postId',  passport.authenticate('jwt', { session: false, failureMessage }), updatePublishPut);
 
 module.exports = postRouter;
