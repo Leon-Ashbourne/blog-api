@@ -2,13 +2,21 @@ const { validationResult, matchedData, body } = require('express-validator');
 const { decode } = require('base64-arraybuffer');
 const multer = require('multer');
 
-const { getPosts, getPostById, getPostsByUserId, deletePost, updatePost, createPost } = require('../models/script');
+const { getPublicPosts, getPostById, getPostsByUserId, deletePost, updatePost, createPost } = require('../models/script');
 const { handleValidationErrors } = require('./errors/errorControllers');
 const { uploadMedia } = require('../models/supabase');
 
 //get posts 
-async function requestPostsGet(req, res) {
-    const { data, error } = await getPosts();
+async function publicPostsGet(req, res) {
+    const query = req.query;
+    const start = parseInt(query.start);
+    const end = parseInt(query.end);
+
+    if(isNaN(start) || isNaN(end)) return  res.status(404).end();
+
+    const id = -1;
+    if(req.user) id = parseInt(req.user.id);
+    const { data, error } = await getPublicPosts(start, end, id);
 
     if(error) {
         return res.status(503).json({ 
@@ -136,9 +144,9 @@ const postCreate = [
 
 //get a single post by its id
 function checkPostIdUrl(req, res, next) {
-    const postId = parseInt(req.params);
+    const postId = parseInt(req.params.postId);
 
-    if(postId) {
+    if(!isNaN(postId)) {
         res.locals.postId = postId;
         next();
     }
@@ -256,11 +264,84 @@ const postUpdate = [
     requestPostUpdate
 ]
 
+//update post publish
+const validatePublish = [
+    body('published').trim()
+        .notEmpty().withMessage(emptyErr)
+        .custom((val) => {
+            if(val === "true" || val === "false") return true;
+            return false;
+        })
+]
+
+async function postPublishPut(req, res) {
+    const postid = res.locals.postId;
+
+    const bool = matchedData(req).published;
+    const published = bool === "false" ? false : true;
+
+    const error = await updatePost(postid, { published });
+
+    if(error) {
+        return res.status(500).json({
+            error,
+        });
+    }
+
+    return res.json({
+        message: "Successfully processesed."
+    })
+}
+
+const updatePublishPut = [
+    checkPostIdUrl,
+    validatePublish,
+    handleValidationErrors,
+    postPublishPut
+]
+
+//update post
+const validatePut = [
+    body("title").trim()
+        .notEmpty().withMessage(emptyErr),
+    body("content").trim()
+        .notEmpty().withMessage(emptyErr)
+]
+
+async function requestPostPut() {
+    const { title, content } = matchedData(req);
+    const data = { title, content };
+    const postid = res.locals.postId;
+
+    const error = await updatePost(post, date);
+
+    if(error) {
+        return res.status(500).jsoon({
+            error,
+        })
+    }
+
+    return res.json({
+        message: "Successfully processesed."
+    });
+}
+
+const updatePostPut = [
+    validatePut,
+    handleValidationErrors,
+    checkPostIdUrl,
+    requestPostPut
+];
+
+
+
 module.exports = {
-    requestPostsGet,
+    publicPostsGet,
     postByIdGet,
     postsGet,
     postCreate,
     postDelete,
-    postUpdate
+    postUpdate,
+    updatePublishPut,
+    updatePostPut
 }
