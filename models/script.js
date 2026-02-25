@@ -82,7 +82,7 @@ async function getUserById(userId) {
 }
 
 //get posts 
-async function getPublicPosts(start, end, id = -1) {
+async function getPublicPosts(start, end) {
     const total = end-start;
     try {
         const data = await prisma.posts.findMany({
@@ -92,11 +92,6 @@ async function getPublicPosts(start, end, id = -1) {
                 AND: [
                     {
                         published: true,
-                    },
-                    {
-                        NOT: {
-                            authorId: id
-                        }
                     }
                 ]
             },
