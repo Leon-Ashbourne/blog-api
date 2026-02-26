@@ -26,7 +26,6 @@ app.use((req, res, next) => {
 //routes
 app.use('/posts', postRouter);
 app.use('/users', userRouter);
-app.use('/comments', passport.authenticate('jwt', { session: false }), commentsRouter);
 app.use('/Sign-up', signupRouter);
 app.use('/Sign-in', signinRouter);
 
