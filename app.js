@@ -6,7 +6,7 @@ const passport = require('./authentication/passport');
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = ["https://editor-blog.netlify.app", "https://blog-main-interface.netlify.app/"]
+const allowedOrigins = ["https://editor-blog.netlify.app", "https://blog-main-interface.netlify.app"]
 app.use((req, res, next) => {
     const origin = req.headers.origin;
 
