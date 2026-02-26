@@ -159,16 +159,27 @@ const deleteUserData = async () => {
  }
 
 //get comment
-async function getCommentById(commentId) {
+async function getPostComments(postid) {
     try {
-        const data = await prisma.comments.findFirst({
+        const data = await prisma.comments.findMany({
             where: {
-                id: commentId,
+                postId: postid,
             },
+            select: {
+                createdAt: true,
+                text: true,
+                id: true,
+                author: {
+                    select: {
+                        username: true,
+                    }
+                }
+            }
         });
 
         return { data };
     }catch (error) {
+        console.error(error)
         return { error };
     }
 }
@@ -334,7 +345,7 @@ module.exports = {
     getPublicPosts,
     getPostsByUserId,
     deleteUserData,
-    getCommentById,
+    getPostComments,
     getCommentsByUserId,
     createComment,
     updateComment,
