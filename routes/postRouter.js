@@ -2,7 +2,12 @@ const Router = require("express").Router;
 const passport = require("../authentication/passport");
 const { publicPostsGet, postsGet, postsByUserIdGet, postDelete, postUpdate, postCreate, updatePublishPut, updatePostPut } = require("../controllers/postsController");
 
+const commentsRouter = require("./commentsRouter");
+
 const postRouter = Router();
+
+//comments
+postRouter.use([ "/:postid/comments", "/comments" ], commentsRouter);
 
 //post routes
 const failureMessage = "authentication failed"
