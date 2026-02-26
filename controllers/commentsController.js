@@ -1,5 +1,5 @@
 const { matchedData, body } = require('express-validator');
-const { getComments, getCommentById, createComment, updateComment, deleteComment } = require('../models/script');
+const { getComments, getPostComments, createComment, updateComment, deleteComment } = require('../models/script');
 const { handleValidationErrors } = require('./errors/errorControllers');
 
 //get comments
@@ -19,10 +19,10 @@ async function requestCommentsGet(req, res) {
 
 //get a specific comment
 function checkCommenIdUrl(req, res,  next) {
-    const commentId = parseInt(req.params.commentId);
+    const postid = parseInt(req.query.postid);
 
-    if(commentId) {
-        res.locals.commentId = commentId;
+    if(!isNaN(postid)) {
+        res.locals.postid = postid;
         next();
     }
 
@@ -31,10 +31,10 @@ function checkCommenIdUrl(req, res,  next) {
     });
 }
 
-async function requestComment(req,res) {
-    const commentId = res.locals.commentId;
+async function requestPostCommentsGet(req, res) {
+    const postid = res.locals.postid;
 
-    const { data, error } = await getCommentById(commentId);
+    const { data, error } = await getPostComments(postid);
 
     if(error) {
         return res.status(503).json({
@@ -47,9 +47,9 @@ async function requestComment(req,res) {
     });
 }
 
-const commentGet = [
+const commentsGet = [
     checkCommenIdUrl,
-    requestComment
+    requestPostCommentsGet
 ]
 
 //get a user's comments
@@ -84,7 +84,7 @@ async function requestCommentByUserId(req, res, next) {
 
 const commentByUserIdGet = [
     checkUserIdUrl,
-    requestCommentByUserId
+    // requestCommentByUserId
 ]
 
 //create a comment
@@ -94,14 +94,25 @@ const validate = [
         .notEmpty().withMessage(commentEmptErr)
 ]
 
+function checkPostIdUrl(req, res, next) {
+    const postid = parseInt(req.query.postid);
+    if(!isNaN(postid)) {
+        res.locals.postid = postid;
+        next();
+        return;
+    }
+
+    res.status(404).json({
+        message: "Not a valid postid. Bad url"
+    })
+}
+ 
 async function requestCreateComment(req, res) {
     const  { comment } = matchedData(req);
+    const postid = res.locals.postid;
+    const userid = req.user.id;
 
-    //Todo- think of a way to get these IDs
-    const userId = parseInt(req.body.userId) || 1; //mock
-    const postId = parseInt(req.body.postId) || 1; //mock
-
-    const error = await createComment(userId, postId, comment);
+    const error = await createComment(userid, postid, comment);
 
     if(error) {
         return res.status(503).json({
@@ -117,6 +128,7 @@ async function requestCreateComment(req, res) {
 const createCommentPost = [
     validate,
     handleValidationErrors,
+    checkPostIdUrl,
     requestCreateComment,
 ]
 
@@ -169,7 +181,7 @@ const commentDelete = [
 
 module.exports = {
     requestCommentsGet,
-    commentGet,
+    commentsGet,
     commentByUserIdGet,
     createCommentPost,
     updateCommentPut,
